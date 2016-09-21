@@ -1,0 +1,49 @@
+// Base state of not being seen;
+
+.title{
+	display:none;
+}
+
+.scene1 {
+	
+
+
+	.title{
+		display:block;
+		font-family:'Arvo', serif;
+		text-align: center;
+		text-transform: uppercase;
+		font-size: 143px;
+		margin:580px 0 0 0;
+		line-height: .94em;
+		transform:translate(1000px,0);
+		opacity:0;
+		width: 100%;
+
+		span{
+			display: block;
+			color:$bears_orange;
+			font-size: 165px;
+
+		}
+
+	}
+
+}
+
+.logo{
+	    width: 500px;
+    height: 500px;
+    position: absolute;
+    top: 50px;
+    opacity:0;
+  	&--home{
+  		right: 400px;
+  		transform:translate(-1000px, 0);
+  	}
+  	&--away{
+  		left:400px;
+  		transform:translate(-800px, 0);
+  	}
+}
+

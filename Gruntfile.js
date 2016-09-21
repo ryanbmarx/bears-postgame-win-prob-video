@@ -6,8 +6,8 @@ module.exports = function(grunt) {
   // You'll also have to install them using a command similar to:
   //     npm install --save jquery
   var VENDOR_LIBRARIES = [
-    //'jquery',
-    //'underscore'
+    'd3',
+    'underscore'
   ];
 
   config.browserify = {
@@ -62,16 +62,17 @@ module.exports = function(grunt) {
   }
 
   config.sass = {
-    options: {
-      outpuStyle: 'compressed',
-      sourceMap: true
-    },
-    app: {
-      files: {
-        'css/styles.css': 'sass/styles.scss'
-      }
+  options: {
+    outputStyle: 'compressed',
+    sourceMap: true,
+    includePaths: [ 'sass/', 'node_modules/trib-styles/sass/' ]
+  },
+  app: {
+    files: {
+      'css/styles.css': 'sass/styles.scss'
     }
-  };
+  }
+};
 
   config.watch = {
     sass: {
@@ -84,9 +85,23 @@ module.exports = function(grunt) {
     }
   };
 
+
+
+  config.svgstore = {
+       options: {
+         prefix : '', // This will prefix each <g> ID
+         cleanup : 'false' // Should remove all inline styles
+       },
+       default : {
+           files: {
+             'img/nfl-icon-defs.svg': ['svg/*.svg']
+           }
+       }
+   };
   grunt.initConfig(config);
 
-  grunt.loadNpmTasks('grunt-sass');
+  grunt.loadNpmTasks('grunt-sass');  
+  grunt.loadNpmTasks('grunt-svgstore');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
@@ -94,6 +109,8 @@ module.exports = function(grunt) {
 
   defaultTasks.push('sass');
   defaultTasks.push('browserify');
+  defaultTasks.push('svgstore');
+
 
   grunt.registerTask('default', defaultTasks);
 };
