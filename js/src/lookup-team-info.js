@@ -5,7 +5,7 @@ function lookupTeamInfo(team, field) {
     { "team": "Ravens", "abbrv": "BAL", "sdi": "Baltimore", team_color: "#2B025B", team_text_color: "black" },
     { "team": "Bills", "abbrv": "BUF", "sdi": "Buffalo", team_color: "#C60C30", team_text_color: "black" },
     { "team": "Panthers", "abbrv": "CAR", "sdi": "Carolina", team_color: "#0088CE", team_text_color: "black" },
-    { "team": "Bears", "abbrv": "CHI", "sdi": "Chicago",team_color: "#12182d", team_text_color: "white" },
+    { "team": "Bears", "abbrv": "CHI", "sdi": "Chicago",team_color: "#12182d",team_alternate_color: "#DD4814", team_text_color: "white" },
     { "team": "Bengals", "abbrv": "CIN", "sdi": "Cincinnati", team_color: "#FB4F14", team_text_color: "black" },
     { "team": "Browns", "abbrv": "CLE", "sdi": "Cleveland", team_color: "#ed7e11", team_text_color: "black" },
     { "team": "Cowboys", "abbrv": "DAL", "sdi": "Dallas", team_color: "#D0D2D4", team_text_color: "black" },

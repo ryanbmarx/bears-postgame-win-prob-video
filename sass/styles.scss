@@ -23,6 +23,8 @@ $line-color: #C11B17;
 
 // }
 @import 'base-variables';
+@import 'base-mixins';
+@import 'mixins/_typography.scss';
 @import 'linescore';
 @import 'intro';
 
@@ -42,3 +44,8 @@ body{
     position: relative;
 }
 
+.quarter-label{
+	@include sans-serif-text(23px, 1, bold);
+	fill:#aaa;
+	transform:translate(10,0);
+}

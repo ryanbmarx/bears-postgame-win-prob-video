@@ -3,7 +3,8 @@
 var d3 = require('d3');
 var lookupTeamInfo = require ('./lookup-team-info');
 var scene1 = require ('./scene1');
-// var scene2 = require ('./scene2');
+var scene2 = require ('./scene2');
+var scene3 = require ('./scene3');
 
 function runVideo(gameId){
 	// This is the master controller function.
@@ -34,6 +35,12 @@ function runVideo(gameId){
 
 
 		console.log(data);
+
+		for (var i=0 ; i< data.plays.length ; i++){
+			// We need the play number for x-axis. So let's quickly add it.
+			data.plays[i]['play'] = i+1;
+		}
+
 		window.data = data;
 		window.homeTeam = data.metadata.home;
 		window.awayTeam = data.metadata.away;
@@ -106,7 +113,7 @@ function runVideo(gameId){
 		// ###########
 
 
-		scene1();
+		scene3();
 
 	})
 

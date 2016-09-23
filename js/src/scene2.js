@@ -1,6 +1,7 @@
-var d3 = require('d3');
+import * as d3 from "d3";
 var lookupTeamInfo = require('./lookup-team-info');
 var _ = require('underscore');
+var scene3 = require('./scene3');
 
 // Text transition method from here: https://bl.ocks.org/mbostock/7004f92cac972edef365
 
@@ -30,9 +31,7 @@ function lineScoreNumberTransition(idx, score, line, transitionTime){
 
 
 function scene2(){
-
-
-	console.log('linescore//scene2')
+	console.log('Linescore // scene2')
 	d3.select('#video').classed('scene1', false).classed('scene2', true);
 	let scene2transition = 2000;
 
@@ -45,23 +44,8 @@ function scene2(){
 			var timer = window.setTimeout(lineScoreNumberTransition, 250 * i, i, score, line, scene2transition);
 		}
 	})
-				
 
-	// d3.select('.linescore__away .linescore__6')
- //  		.transition()
-	//     .duration(scene2transition)
-	//     .on("start", function() {
-	//       d3.active(this)
-	//           .tween("text", function() {
-	//             var that = d3.select(this),
-	//                 i = d3.interpolateNumber(0,window.scores.away.score6);
-	//             return function(t) { that.text(format(i(t))); };
-	//           })
-	//     });
-
-
-
-
+	var nextScene = window.setTimeout(scene3, 4000);
 }
 
 module.exports = scene2;
