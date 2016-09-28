@@ -14,10 +14,11 @@ function scene3(){
 	d3.select('.linescore')
 		.style('transform-origin', 'top left')
 		.transition()
-		.duration(1000)
+		.duration(window.transition)
 		.style('transform', 'scale(.5)')
 		.style('top', '50px')
 		.style('left','50px')
+		.style('opacity', 1)
 		.on('end', () =>{ 
 			drawChart('#chart-container', window.data.plays);
 		});
@@ -27,10 +28,20 @@ function scene3(){
 	d3.select('#chart-container')
 		// .style("background", "rgba(0,0,255,.3)")
 		.style("width", " 1920px")
-		.style("height", " 823px")
+		.style("height", " 750px")
 		.style("position", " absolute")
 		.style("bottom", "0")
-		.style("left", "0")
+		.style("left", "0");
+
+	d3.select('#video')
+		.append('div')
+		.classed('dot-text-container', true)
+		.style("width", '1005px')
+		.style("height", '244px')
+		.style("position", " absolute")
+		.style("top", '47px')
+		.style("right", '51px')
+		.style('background', 'red');
 }
 
 module.exports = scene3;

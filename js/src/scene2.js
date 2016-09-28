@@ -33,7 +33,7 @@ function lineScoreNumberTransition(idx, score, line, transitionTime){
 function scene2(){
 	console.log('Linescore // scene2')
 	d3.select('#video').classed('scene1', false).classed('scene2', true);
-	let scene2transition = 2000;
+	let scene2transition = window.transition;
 
 	let teams = ['away', 'home'];
 

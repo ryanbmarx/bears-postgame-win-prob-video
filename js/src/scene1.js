@@ -5,7 +5,7 @@ var scene2 = require('./scene2');
 function scene1(){
 	console.log('INtro//scene1')
 
-       let scene1transition = 2000;
+       let scene1transition = window.transition;
        d3.select('#video').classed('scene1', true);
 
        // Slide in home, away logos

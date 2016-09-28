@@ -44,7 +44,7 @@ function runVideo(gameId){
 		window.data = data;
 		window.homeTeam = data.metadata.home;
 		window.awayTeam = data.metadata.away;
-
+		window.transition = 2000;
 		// ###########
 		// Start with some housekeeping
 		// ###########
@@ -105,7 +105,15 @@ function runVideo(gameId){
 		.append('use')
 			.attr("xlink:href", `#${lookupTeamInfo(window.awayTeam, 'abbrv')}`);
 
+		// Get our title card ready for some cool transitions!
+		d3.select('#video')
+			.append('div')
+			.classed('title-card', true)
+			.append('p')
 
+		d3.select('.title-card')
+			.append('p')
+			.classed('credit', true);
 
 
 		// ###########

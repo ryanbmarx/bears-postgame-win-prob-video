@@ -12,7 +12,7 @@ function drawChart(container, data){
 	var margin = {
 		top: 0,
 		right: 0,
-		bottom: 0,
+		bottom: 25,
 		left: 75,
 	}
 	var height = containerRect.height,
@@ -73,7 +73,7 @@ function drawChart(container, data){
 				.attr('x',0)
 				.attr('transform', `translate(${0-width}, 0 )`)
 				.transition()
-				.duration(2000)
+				.duration(window.transition)
 				.attr('transform', `translate(0, 0)`);
 		}  else if (i == 50){
 			d3.select('.grid')
@@ -85,7 +85,7 @@ function drawChart(container, data){
 				.attr('x',0)
 				.attr('transform', `translate(${0-width}, 0 )`)
 				.transition()
-				.duration(2000)
+				.duration(window.transition)
 				.attr('transform', `translate(0, 0)`);
 		}
 
@@ -106,7 +106,7 @@ function drawChart(container, data){
 					.attr('y',0)
 					.attr('transform', `translate(0, ${height})`)
 					.transition()
-					.duration(2000)
+					.duration(window.transition)
 					.attr('transform', `translate(0, 0)`)
 					.on('end', () => {
 					});
@@ -174,14 +174,11 @@ function drawChart(container, data){
 		.style('stroke-linecap',"round")
 		.attr("class", "lineChart")
 		.transition()
-		.duration(2000)
+		.duration(window.transition)
 			.attr("d", lineChart)
 			.on('end', ()=>{
 				chartAddScores(x, y, homeAway);
 			});
-
-
-
 
  
 }
