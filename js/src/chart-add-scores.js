@@ -3,6 +3,30 @@ var lookupTeamInfo = require('./lookup-team-info');
 var _ = require('underscore');
 var titleCard = require('./title-card');
 
+
+function translateAlong(path) {
+	var l = path.getTotalLength();
+	return function(i) {
+	  return function(t) {
+	    var p = path.getPointAtLength(t * l);
+	    return "translate(" + p.x + "," + p.y + ")";//Move marker
+	  }
+	}
+}
+
+
+
+function transition(i) {
+	let flag = d3.select(`.penalty-flag--${i}`);
+	let path = d3.select(`.penalty-path--${i}`);
+	flag.transition()
+	    .duration(1000)
+	    .style('opacity', 1)
+	    .attrTween("transform", translateAlong(path.node()));
+}
+
+
+
 function checkForSubstrings(description, strings_array){
 	// takes a strong (description) and an array of substrings. 
 	// If any of those substrings are present in the string, it returns true.
@@ -50,7 +74,7 @@ function addScores(scoresData){
 
 
 
-function chartAddScores(x,y,bearsHomeAway){
+function chartAddScores(x,y,bearsHomeAway, height, width){
 	// Takes the x and y scale functions as arguments along with a 
 	// string (either 'home' or 'away' reflecting the Bears' status for that game)
 	console.log('drawing scores');
@@ -84,6 +108,9 @@ function chartAddScores(x,y,bearsHomeAway){
 
 
 	// FILTER PENALTIY PLAYS
+	const penalties = d3.select('.chart-inner')
+		.append('g')
+		.classed('penalties', true);
 	var penaltyData = _.filter(data, (play, index) => {
 		if (play['penalties'].length > 0){
 			return true;
@@ -176,33 +203,53 @@ function chartAddScores(x,y,bearsHomeAway){
 			.duration(window.transition / 2)
 			.style('opacity', 1)
 			.on('end', ()=>{
-				penaltyData.forEach( (value, index) => {
+				penaltyData.forEach((value, index) => {
 					setTimeout(function(){
-					let homeAway = value['possessor'] == window.homeTeam ? 'home' : 'away';
-					turnovers.append('circle')
-						.attr('r', 0)
-						.attr('cx', x(value['play']))
-						.attr('cy', y(value['prob'][bearsHomeAway]))
-						.attr('fill', () => {
-							return homeAway == 'home' ? lookupTeamInfo(window.homeTeam, 'team_color') : lookupTeamInfo(window.awayTeam, 'team_color');
-						})
-						.attr('stroke-width', 3)
-						.attr('stroke', 'yellow')
-						.transition()
-							.duration(dotDelay)
-							.attr('r', penaltyIconDimension);
-					if (index == penaltyData.length - 1){
-						console.log('penalties done');
-						// dispatch.call('turnoversDone');
-						titleCard({
-							text:'Big Play #1',
-							img:'jordy.jpg',
-							credit:'XYZ PHOTO',
-							delay:4000
-						});
-					}
+						penalties.append('path')
+							.style('stroke', 'transparent')
+							// .style('stroke-width', '1')
+							.style('fill', 'transparent')
+							.attr('d', () =>{
+								let arcPoints = {};
+									arcPoints.startX = width / 2,
+									arcPoints.startY = height,
+									arcPoints.finalX = x(value['play']),
+									arcPoints.finalY = y(value['prob'][bearsHomeAway]),
+									arcPoints.midpointX = arcPoints.startX + ((arcPoints.finalX - arcPoints.startX) / 2),
+									arcPoints.midpointY = -450;
+								return `M ${arcPoints.startX} ${arcPoints.startY}
+										Q ${arcPoints.midpointX} ${arcPoints.midpointY} ${arcPoints.finalX} ${arcPoints.finalY}`;
+							})
+							.classed(`penalty-path`, true)
+							.classed(`penalty-path--${index}`, true);
 
-					}, dotDelay * index);		
+						let homeAway = value['possessor'] == window.homeTeam ? 'home' : 'away';
+						penalties.append('circle')
+							.classed('penalty-flag', true)
+							.classed(`penalty-flag--${index}`, true)
+							.attr('transform', `translate(${width / 2} ${height})`)
+							.attr('fill', () => {
+								return homeAway == 'home' ? lookupTeamInfo(window.homeTeam, 'team_color') : lookupTeamInfo(window.awayTeam, 'team_color');
+							})
+							.attr('stroke-width', 3)
+							.attr('stroke', 'yellow')
+							.attr('r', penaltyIconDimension)
+							.style('opacity',0);
+							
+							transition(index);
+
+								
+							// if (index == penaltyData.length - 1){
+							// 	console.log('penalties done');
+							// 	// dispatch.call('turnoversDone');
+							// 	titleCard({
+							// 		text:'Big Play #1',
+							// 		img:'jordy.jpg',
+							// 		credit:'XYZ PHOTO',
+							// 		delay:4000
+							// 	});
+							// }							
+					}, 25 * index )
 				});
 			});
 	});
