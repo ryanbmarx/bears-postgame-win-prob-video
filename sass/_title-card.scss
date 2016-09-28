@@ -1,0 +1,28 @@
+.title-card{
+	background:rgba(white, .95);
+	height:100%;
+	width:100%;
+	display:flex;
+	align-items:center;
+	justify-content:center;
+	position:absolute;
+	top:0;
+	left:0;
+	opacity:0;
+	transform:translate(0-$video_width, 0);
+	p{
+		@include display_type(90px, 1.3em, bold);
+	    padding: 35px;
+	    background: rgba(255,255,255,.75);
+	}
+
+	p.credit{
+		@include sans_serif_text(20px, 1.2em, bold);
+		color:white;
+		text-shadow: 0 0 10px white;
+		background:none;
+		position:absolute;
+		bottom:0;
+		right:0;
+	}
+}
