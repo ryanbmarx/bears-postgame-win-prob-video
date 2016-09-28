@@ -2,6 +2,7 @@
 
 var d3 = require('d3');
 var lookupTeamInfo = require ('./lookup-team-info');
+var getLineScore = require('./get-line-score')
 var scene1 = require ('./scene1');
 var scene2 = require ('./scene2');
 var scene3 = require ('./scene3');
@@ -12,28 +13,7 @@ function runVideo(gameId){
 	console.log('running video');
 
 	d3.json(`winprobability__${gameId}.json`, (err, data) => {
-		
-		window.scores = {
-			home:{
-				score1:0,
-				score2:10,
-				score3: 3,
-				score4: 10,
-				score5: undefined,
-				score6:23
-			},
-			away:{
-				score1:7,
-				score2:7,
-				score3: 0,
-				score4: 0,
-				score5: undefined,
-				score6:14
-			}
-		}
-
-
-
+	
 		console.log(data);
 
 		for (var i=0 ; i< data.plays.length ; i++){
@@ -45,6 +25,8 @@ function runVideo(gameId){
 		window.homeTeam = data.metadata.home;
 		window.awayTeam = data.metadata.away;
 		window.transition = 2000;
+		window.scores = getLineScore(data)
+
 		// ###########
 		// Start with some housekeeping
 		// ###########
@@ -121,7 +103,7 @@ function runVideo(gameId){
 		// ###########
 
 
-		scene3();
+		scene1();
 
 	})
 
