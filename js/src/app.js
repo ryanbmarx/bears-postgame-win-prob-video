@@ -2,7 +2,8 @@
 
 var d3 = require('d3');
 var lookupTeamInfo = require ('./lookup-team-info');
-var getLineScore = require('./get-line-score')
+var getLineScore = require('./get-line-score');
+var getTimeOfWinProb = require('./get-time-of-win-prob')
 var scene1 = require ('./scene1');
 var scene2 = require ('./scene2');
 var scene3 = require ('./scene3');
@@ -26,7 +27,8 @@ function runVideo(gameId){
 		window.awayTeam = data.metadata.away;
 		window.transition = 2000;
 		window.scores = getLineScore(data)
-
+		window.timeOfWinProb = getTimeOfWinProb(data);
+		console.log(window.timeOfWinProb);
 		// ###########
 		// Start with some housekeeping
 		// ###########
@@ -87,23 +89,38 @@ function runVideo(gameId){
 		.append('use')
 			.attr("xlink:href", `#${lookupTeamInfo(window.awayTeam, 'abbrv')}`);
 
+
+		// Get the time pie container ready
+			d3.select('#video')
+			.append('div')
+				.classed('time-pie-container', true)
+				.style("width", '1030px')
+				.style("height", '244px')
+				.style("position", " absolute")
+				.style("top", '47px')
+				.style("right", '25px')
+
 		// Get our title card ready for some cool transitions!
 		d3.select('#video')
 			.append('div')
 			.classed('title-card', true)
 			.append('p')
+				.classed('main-text', true)
 
 		d3.select('.title-card')
 			.append('p')
 			.classed('credit', true);
 
+		d3.select('.title-card')
+			.append('p')
+			.classed('sub-text', true);
 
 		// ###########
 		// And now, on with the show. Call the first scene (scene1/intro);
 		// ###########
 
 
-		scene1();
+		scene3();
 
 	})
 
