@@ -16,9 +16,9 @@ function translateAlong(path) {
 
 
 
-function transition(i) {
-	let flag = d3.select(`.penalty-flag--${i}`);
-	let path = d3.select(`.penalty-path--${i}`);
+function transition(i, type_str) {
+	let flag = d3.select(`.${type_str}-icon--${i}`);
+	let path = d3.select(`.${type_str}-path--${i}`);
 	flag.transition()
 	    .duration(1000)
 	    .style('opacity', 1)
@@ -51,27 +51,24 @@ function isItATurnOver(play_obj, data_index, turnoverPhrases, data){
 	return false;
 }
 
+function setDotVertical(dotType, value){
+	console.log(value);
+	if(dotType == "score"){
+		if (value < 0.70 ) {
+			return y(.88)
+		} else {
+			return y(.10)
+		}
+	}
 
-
-function addScores(scoresData){
-	scoresData.forEach( (value, index) => {
-		setTimeout(function(){
-			let homeAway = value['points']['team'] == window.homeTeam ? 'home' : 'away';
-			let scoreType = value['points']['number'] == 6 ? 'touchdown' : 'fieldgoal'
-			scores.append('circle')
-				.attr('r', 0)
-				.attr('cx', x(value['play']))
-				.attr('cy', y(value['prob'][bearsHomeAway]))
-				.attr('fill', () => {
-					return homeAway == 'home' ? lookupTeamInfo(window.homeTeam, 'team_color') : lookupTeamInfo(window.awayTeam, 'team_color');
-				})
-				.transition()
-					.duration(dotDelay)
-					.attr('r', scoreIconDimension);
-		}, dotDelay * index);
-	});
+	if(dotType == "turnover"){
+		if (value < 0.70 ) {
+			return y(.80)
+		} else {
+			return y(.20)
+		}
+	}
 }
-
 
 
 function chartAddScores(x,y,bearsHomeAway, height, width){
@@ -79,11 +76,11 @@ function chartAddScores(x,y,bearsHomeAway, height, width){
 	// string (either 'home' or 'away' reflecting the Bears' status for that game)
 	console.log('drawing scores');
 	const data = window.data.plays;
-	const scoreIconDimension = 40;
+	const scoreIconDimension = 26;
 	const turnoverIconDimension = 20;
-	const penaltyIconDimension = 10;
-	const dotDelay = window.transition / 7;
-	const dispatch = d3.dispatch('scoresDone', 'turnoversDone');
+	const penaltyIconDimension = 6;
+	const dotDelay = window.transition / 9;
+	window.dispatch = d3.dispatch('scoresDone','scoreCardDone', 'turnoversDone', 'turnoversCardDone', 'penaltiesCardDone');
 
 
 	// FILTER SCORING PLAYS
@@ -92,7 +89,7 @@ function chartAddScores(x,y,bearsHomeAway, height, width){
 		.classed('scores', true);
 
 	const scoresData = _.filter(data, (play, index) => {
-			return play['points']['number'] > 2 == true;
+			return play['points']['number'] > 1 == true;
 	});
 
 
@@ -117,33 +114,70 @@ function chartAddScores(x,y,bearsHomeAway, height, width){
 		};
 	});
 
-	let title = d3.select('.dot-text-container')
-		.append('p')
-		.classed('dot-title', true)
-		.text('Scoring plays')
-		.style('opacity', 0)
-		.transition()
-		.duration(window.transition)
-		.style('opacity', 1)
-		.on('end', () =>{
+	titleCard({
+		text:'The Scores',
+		delay:1000,
+		dispatch:'scoreCardEnd'
+	})
+		window.dispatch.on('scoreCardEnd', () =>{
 			// Place the dots for each score
 			scoresData.forEach( (value, index) => {
 				setTimeout(function(){
-					let homeAway = value['points']['team'] == window.homeTeam ? 'home' : 'away';
-					let scoreType = value['points']['number'] == 6 ? 'touchdown' : 'fieldgoal'
+					let homeAway = value['points']['team'] == window.homeTeam ? 'home' : 'away',
+						scoreType = value['points']['number'] == 6 ? 'touchdown' : 'fieldgoal',
+						winProb = value['prob'][bearsHomeAway],
+						play = value['play'];
+
+					// Draw the line
+					scores.append('path')
+						.style('stroke', '#888')
+						.style('stroke-width', '4px')
+						.style('stroke-dasharray', '8,5')
+						.style('transform-origin', () =>{
+							return setDotVertical('score', winProb) > .5 ? 'top' : 'bottom';
+						} )
+						.style('transform', `scale(0)`)
+						.attr('d',`M ${x(play)} ${setDotVertical('score', winProb)} L ${x(play)} ${y(winProb)}`)
+						.transition()
+							.duration(dotDelay)
+							.style('transform', `scale(1)`);
+
 					scores.append('circle')
 						.attr('r', 0)
-						.attr('cx', x(value['play']))
-						.attr('cy', y(value['prob'][bearsHomeAway]))
+						.attr('cx', x(play))
+						.attr('cy', setDotVertical('score', winProb))
 						.attr('fill', () => {
 							return homeAway == 'home' ? lookupTeamInfo(window.homeTeam, 'team_color') : lookupTeamInfo(window.awayTeam, 'team_color');
 						})
 						.transition()
 						.duration(dotDelay)
 						.attr('r', scoreIconDimension);
+					
+					scores.append('use')
+						.attr('x', x(play))
+						.attr('y', setDotVertical('score', winProb))
+						.attr('height', scoreIconDimension * 2)
+						.attr('width', scoreIconDimension * 2)
+						.attr("xlink:href", () => {
+							if(value['points']['number'] == 6){
+								return `#touchdown`;
+							} else if(value['points']['number'] == 3) {
+								return `#fieldgoal`;
+							}
+							return `#safety`;
+						})
+						.style('opacity',0)
+						.style('stroke','transparent')
+						.style('fill', 'white')
+						.attr('transform', `translate(${0-scoreIconDimension}, ${0-scoreIconDimension})`)
+						.transition()
+							.duration(dotDelay)
+							.style('opacity',1)
+
+						
 					if (index == scoresData.length - 1){
 						console.log('scoresDone');
-						dispatch.call('scoresDone');
+						window.dispatch.call('scoresDone');
 					}
 				}, dotDelay * index);
 
@@ -152,7 +186,7 @@ function chartAddScores(x,y,bearsHomeAway, height, width){
 
 
 		// Let's listen for when scores is done and then do turnovers.
-		dispatch.on('scoresDone', () => {
+		window.dispatch.on('scoresDone', () => {
 			d3.select('.dot-title')
 			.transition()
 			.duration(window.transition / 2)
@@ -167,11 +201,28 @@ function chartAddScores(x,y,bearsHomeAway, height, width){
 			.on('end', ()=>{
 				turnoverData.forEach( (value, index) => {
 					setTimeout(function(){
-					let homeAway = value['possessor'] == window.homeTeam ? 'home' : 'away';
+					let homeAway = value['possessor'] == window.homeTeam ? 'home' : 'away',
+						scoreType = value['points']['number'] == 6 ? 'touchdown' : 'fieldgoal',
+						winProb = value['prob'][bearsHomeAway],
+						play = value['play'];
+
+					scores.append('path')
+						.style('stroke', '#aaa')
+						.style('stroke-width', '3px')
+						.style('stroke-dasharray', '5,5')
+						.style('transform-origin', () =>{
+							return setDotVertical('turnover', winProb) > .5 ? 'top' : 'bottom';
+						} )
+						.style('transform', `scale(0)`)
+						.attr('d',`M ${x(play)} ${setDotVertical('turnover', winProb)} L ${x(play)} ${y(winProb)}`)
+						.transition()
+							.duration(dotDelay)
+							.style('transform', `scale(1)`);
+
 					turnovers.append('circle')
 						.attr('r', 0)
-						.attr('cx', x(value['play']))
-						.attr('cy', y(value['prob'][bearsHomeAway]))
+						.attr('cx', x(play))
+						.attr('cy', setDotVertical('turnover', winProb))
 						.attr('fill', () => {
 							return homeAway == 'home' ? lookupTeamInfo(window.homeTeam, 'team_color') : lookupTeamInfo(window.awayTeam, 'team_color');
 						})
@@ -182,14 +233,14 @@ function chartAddScores(x,y,bearsHomeAway, height, width){
 							.attr('r', turnoverIconDimension);
 					if (index == turnoverData.length - 1){
 						console.log('turnoversDone');
-						dispatch.call('turnoversDone');
+						window.dispatch.call('turnoversDone');
 					}
 
 					}, dotDelay * index);		
 				});
 			});
 		});
-	dispatch.on('turnoversDone', () => {
+	window.dispatch.on('turnoversDone', () => {
 		console.log('Now on to penalties');
 		d3.select('.dot-title')
 			.transition()
@@ -204,6 +255,10 @@ function chartAddScores(x,y,bearsHomeAway, height, width){
 			.style('opacity', 1)
 			.on('end', ()=>{
 				penaltyData.forEach((value, index) => {
+					let homeAway = value['possessor'] == window.homeTeam ? 'home' : 'away',
+						winProb = value['prob'][bearsHomeAway],
+						play = value['play'];
+
 					setTimeout(function(){
 						penalties.append('path')
 							.style('stroke', 'transparent')
@@ -211,10 +266,10 @@ function chartAddScores(x,y,bearsHomeAway, height, width){
 							.style('fill', 'transparent')
 							.attr('d', () =>{
 								let arcPoints = {};
-									arcPoints.startX = width / 2,
+									arcPoints.startX = width,
 									arcPoints.startY = height,
 									arcPoints.finalX = x(value['play']),
-									arcPoints.finalY = y(value['prob'][bearsHomeAway]),
+									arcPoints.finalY = y(winProb),
 									arcPoints.midpointX = arcPoints.startX + ((arcPoints.finalX - arcPoints.startX) / 2),
 									arcPoints.midpointY = -450;
 								return `M ${arcPoints.startX} ${arcPoints.startY}
@@ -224,24 +279,26 @@ function chartAddScores(x,y,bearsHomeAway, height, width){
 							.classed(`penalty-path--${index}`, true);
 
 						let homeAway = value['possessor'] == window.homeTeam ? 'home' : 'away';
+						
+
 						penalties.append('circle')
-							.classed('penalty-flag', true)
-							.classed(`penalty-flag--${index}`, true)
+							.classed('penalty-icon', true)
+							.classed(`penalty-icon--${index}`, true)
 							.attr('transform', `translate(${width / 2} ${height})`)
-							.attr('fill', () => {
+							.attr('stroke', () => {
 								return homeAway == 'home' ? lookupTeamInfo(window.homeTeam, 'team_color') : lookupTeamInfo(window.awayTeam, 'team_color');
 							})
-							.attr('stroke-width', 3)
-							.attr('stroke', 'yellow')
+							.attr('stroke-width', 6)
+							.attr('fill', 'yellow')
 							.attr('r', penaltyIconDimension)
 							.style('opacity',0);
 							
-							transition(index);
+							transition(index, 'penalty');
 
 								
 							// if (index == penaltyData.length - 1){
 							// 	console.log('penalties done');
-							// 	// dispatch.call('turnoversDone');
+							// 	// window.dispatch.call('turnoversDone');
 							// 	titleCard({
 							// 		text:'Big Play #1',
 							// 		img:'jordy.jpg',
