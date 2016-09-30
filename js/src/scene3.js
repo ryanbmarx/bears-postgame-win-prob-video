@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-var drawChart = require('./drawchart')
+var drawTimePie = require('./draw-time-pie');
 // var lookupTeamInfo = require('./lookup-team-info');
 // var _ = require('underscore');
 // var scene4 = require('./scene3');
@@ -20,7 +20,8 @@ function scene3(){
 		.style('left','50px')
 		.style('opacity', 1)
 		.on('end', () =>{ 
-			drawChart('#chart-container', window.data.plays);
+			// drawChart('#chart-container', window.data.plays);
+			drawTimePie('.time-pie-container', window.data.plays);
 		});
 
 	// Now, draw the chart.
@@ -33,15 +34,24 @@ function scene3(){
 		.style("bottom", "0")
 		.style("left", "0");
 
+	// d3.select('#video')
+	// 	.append('div')
+	// 		.classed('dot-text-container', true)
+	// 		.style("width", '500px')
+	// 		.style("height", '244px')
+	// 		.style("position", " absolute")
+	// 		.style("top", '47px')
+	// 		.style("right", '51px')
+	// 		.style('background', 'red');
+
 	d3.select('#video')
 		.append('div')
-		.classed('dot-text-container', true)
-		.style("width", '1005px')
-		.style("height", '244px')
-		.style("position", " absolute")
-		.style("top", '47px')
-		.style("right", '51px')
-		.style('background', 'red');
+			.classed('time-pie-container', true)
+			.style("width", '1030px')
+			.style("height", '244px')
+			.style("position", " absolute")
+			.style("top", '47px')
+			.style("right", '25px')
 }
 
 module.exports = scene3;
