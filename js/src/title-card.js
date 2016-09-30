@@ -4,12 +4,14 @@ import * as d3 from "d3";
 options = {
 	text:'Blurb',
 	img:'xxxxx.jpg',
-	imgCredit : "xyz photo"
+	imgCredit : "xyz photo",
+	dispatch:'xyzEnd',
+	delay:1000
 }
 
 */
 
-function titleCard(options){
+function titleCard(options, callback){
 	console.log(options);
 	if (options.img != undefined && options.credit != undefined){
 		d3.select('.title-card')
@@ -42,7 +44,12 @@ function titleCard(options){
 			.duration(window.transition)
 			.delay(options.delay)
 			.style('opacity', 1)
-			.style('transform', 'translate(2000px,0)');
+			.style('transform', 'translate(2000px,0)')
+			.on('end', () => {
+				if(callback){
+					callback()
+				};
+			});
 }
 
 module.exports = titleCard;
