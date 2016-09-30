@@ -6,7 +6,8 @@ function getLineScore(data){
 			score2:0,
 			score3:0,
 			score4:0,
-			score5:0
+			score5:0, 
+			score6:0
 
 		},
 		away:{
@@ -14,7 +15,8 @@ function getLineScore(data){
 			score2:0,
 			score3:0,
 			score4:0,
-			score5:0
+			score5:0,
+			score6:0
 		}
 	}
 
