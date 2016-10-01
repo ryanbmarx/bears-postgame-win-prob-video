@@ -1,9 +1,11 @@
-.title-card{
+#title-card{
 	background:rgba(white, .95);
 	height:100%;
 	width:100%;
 	display:flex;
+	flex-wrap:wrap;
 	align-items:center;
+    align-content: center;
 	justify-content:center;
 	position:absolute;
 	top:0;
@@ -11,9 +13,18 @@
 	opacity:0;
 	transform:translate(0-$video_width, 0);
 	p{
-		@include display_type(90px, 1.3em, bold);
 	    padding: 35px;
 	    background: rgba(255,255,255,.75);
+	    width:100%;
+	    text-align:center;
+	    margin: 0 0 25px 0;
+
+	    &.main-text{
+	    		@include display_type(90px, 1.3em, bold);
+	    }
+	    &.sub-text{
+	    		@include display_type(25px, 1.3em, normal);
+	    }
 	}
 
 	p.credit{
