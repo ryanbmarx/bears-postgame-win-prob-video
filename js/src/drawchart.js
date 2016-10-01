@@ -10,7 +10,7 @@ function drawChart(container, data){
 	var containerRect = d3.select(container).node().getBoundingClientRect();
 
 	var margin = {
-		top: 0,
+		top: 50,
 		right: 0,
 		bottom: 25,
 		left: 75,
@@ -38,14 +38,14 @@ function drawChart(container, data){
 
 
 	// THIS IS THE NUMBER OF PLAYS
-	let x = d3.scaleLinear()
+	window.x = d3.scaleLinear()
 	    .range([0, innerWidth])
 	    .domain([1, data.length]);
 
 	
 
 	// THIS IS THE WIN PROB
-	let y = d3.scaleLinear()
+	window.y = d3.scaleLinear()
 		.range([innerHeight, 0])
 		.domain([0, 1]);
 
@@ -64,23 +64,23 @@ function drawChart(container, data){
 	// Add horizontal gridlines
 	for (var i=0; i< 101; i++){
 		if (i % 10 == 0 && i != 50){
-			d3.select('.grid')
-				.append('rect')
-				.style('height', gridLineWidth)
-				.style('width', width)
-				.style('fill', '#eee')
-				.attr('y',y(i/100))
-				.attr('x',0)
-				.attr('transform', `translate(${0-width}, 0 )`)
-				.transition()
-				.duration(window.transition)
-				.attr('transform', `translate(0, 0)`);
+			// d3.select('.grid')
+			// 	.append('rect')
+			// 	.style('height', gridLineWidth)
+			// 	.style('width', width)
+			// 	.style('fill', '#eee')
+			// 	.attr('y',y(i/100))
+			// 	.attr('x',0)
+			// 	.attr('transform', `translate(${0-width}, 0 )`)
+			// 	.transition()
+			// 	.duration(window.transition)
+			// 	.attr('transform', `translate(0, 0)`);
 		}  else if (i == 50){
 			d3.select('.grid')
 				.append('rect')
 				.style('height', gridLineWidth * 2)
 				.style('width', width)
-				.style('fill', '#aaa')
+				.style('fill', '#dedede')
 				.attr('y',y(i/100) - gridLineWidth * 2 / 2)
 				.attr('x',0)
 				.attr('transform', `translate(${0-width}, 0 )`)
@@ -100,8 +100,8 @@ function drawChart(container, data){
 				d3.select('.grid')
 					.append('rect')
 					.style('width', gridLineWidth * 2)
-					.style('height', height)
-					.style('fill', '#aaa')
+					.style('height', innerHeight)
+					.style('fill', '#dedede')
 					.attr('x',x(data[i]['play']))
 					.attr('y',0)
 					.attr('transform', `translate(0, ${height})`)
@@ -177,7 +177,7 @@ function drawChart(container, data){
 		.duration(window.transition)
 			.attr("d", lineChart)
 			.on('end', ()=>{
-				chartAddScores(x, y, homeAway);
+				chartAddScores(x, y, homeAway, innerHeight, innerWidth);
 			});
 
  

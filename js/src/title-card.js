@@ -6,6 +6,7 @@ options = {
 	img:'xxxxx.jpg',
 	imgCredit : "xyz photo",
 	dispatch:'xyzEnd',
+	subtext:'',
 	delay:1000
 }
 
@@ -21,7 +22,7 @@ function titleCard(options, callback){
 		d3.select('.credit')
 			.text(options.credit);
 	}
-	d3.select('.title-card p')
+	d3.select('.title-card .main-text')
 		.text(options.text)
 		.style('transform', 'translate(-3000,0)')
 		.transition()
@@ -30,6 +31,17 @@ function titleCard(options, callback){
 		.transition()
 			.duration(window.transition)
 			.delay(options.delay * .8)
+			.style('transform', 'translate(500px,0)');
+
+	d3.select('.title-card .sub-text')
+		.text(options.subtext)
+		.style('transform', 'translate(-3000,0)')
+		.transition()
+			.duration(window.transition * 1.4)
+			.style('transform', 'translate(0,0)')
+		.transition()
+			.duration(window.transition)
+			.delay(options.delay * .7)
 			.style('transform', 'translate(500px,0)');
 
 
